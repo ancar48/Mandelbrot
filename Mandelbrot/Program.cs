@@ -75,7 +75,8 @@ namespace Mandelbrot
         }
         static char[,] Scroll(char[,] feld)
         {
-            char[] solution = new char[feld.GetLength(1)];
+            char[,] result = new char[feld.GetLength(0), feld.GetLength(1)];
+            return result;
 
         }
         static void Main(string[] args)
