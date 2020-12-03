@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Mandelbrot
 {
@@ -75,8 +76,34 @@ namespace Mandelbrot
         }
         static char[,] Scroll(char[,] feld)
         {
-            char[,] result = new char[feld.GetLength(0), feld.GetLength(1)];
-            return result;
+            //Erstellen Sie ein 1 - dimensionales Feld, das so lang ist wie eine Zeile des Eingabefeldes.
+            char[] firstLine = new char[feld.GetLength(1)];
+
+            //• Kopieren Sie die erste Zeile des Eingabefelds elementweise in dieses Feld.
+            for (int i = 0; i < feld.GetLength(1); i++)
+            {
+                firstLine[i] = feld[0, i];
+            }
+
+            //• Kopieren Sie die zweite Zeile des Eingabefelds in elementweise in die erste Zeile, dann die
+            //dritte Zeile in die zweite usw..
+            for (int i = 0; i < feld.GetLength(0) - 1; i++)
+            {
+                for (int j = 0; j < feld.GetLength(1) ; j++)
+                {
+                    feld[i, j] = feld[i + 1, j];
+                }
+            }
+
+            //• Zum Schluss kopieren Sie das oben erstellte 1 - dimensionale Feld elementweise in die letzte
+            //Zeile des Eingabefelds.
+
+            for (int i = 0; i < feld.GetLength(1); i++)
+            {
+                feld[feld.GetLength(0) - 1, i] = firstLine[i];
+            }
+
+            return feld;
 
         }
         static void Main(string[] args)
@@ -86,16 +113,33 @@ namespace Mandelbrot
             {
                 for (int j = 0; j < breite; j++)
                 {
-                    hoeheBreite[i, j] = (char)Mandel(i, j); //verschachtelte for-Schleife füllt Array
+                    hoeheBreite[i, j] = zeichenvorrat[Mandel(i, j)]; //verschachtelte for-Schleife füllt Array
                 }
             }
 
-            var a1 = hoeheBreite;
-            var a2 = Mirror(hoeheBreite);
+            //Ausgabe
 
             Print(hoeheBreite);
+
             Console.WriteLine();
-            Print(Mirror(hoeheBreite));
+
+            var mirrored = Mirror(hoeheBreite);
+
+            Console.WriteLine();
+
+            Print(mirrored);
+
+            Console.WriteLine();
+
+            for (int i = 0; i <= 10; i++)
+            {
+                Print(mirrored);
+
+                Scroll(mirrored);
+
+                Console.WriteLine();
+            }
+
             Console.ReadKey();
         }
     }
